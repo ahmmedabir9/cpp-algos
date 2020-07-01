@@ -5,7 +5,7 @@
 #define pb push_back
 #define fo(i,n) for(i=0;i<n;i++)
 #define mkp make_pair
-#define maxx 1000000005
+#define maxx 32
 #define MOD 1000003
 #define mem(a) memset(a, 0, sizeof(a))
 #define pi 3.14159265358979323846
@@ -26,41 +26,48 @@ typedef unsigned long long ull;
 typedef pair<ll, ll> pr;
 typedef vector<ll> vll;
 
-ll coin[52], m;
-ll dp[52][252];
-bool calc[52][252];
+#define INF 1061109567
 
-ll solve(ll i, ll target)
-{
-    if (target < 0) return 0;
-    if (target == 0)   return 1;
+int w[maxx][maxx];
+int mem[maxx][1<<maxx];
 
-    if (i > m) return 0;
-
-    if (calc[i][target] == false)
-    {
-        dp[i][target] = solve(i + 1, target - coin[i]) + solve(i + 1, target);
-        calc[i][target] = true;
-    }
-
-    return dp[i][target];
-
+int turnOn(int x, int pos) {
+    return x | (1<<pos);
 }
+
+bool check(int x ,int pos) {
+    return (bool)(x & (1<<pos));
+}
+
+int n;
+int travel(int i, int mask) {
+    if (mask == (1<<n) - 1) {
+        return w[i][0];
+    }
+    
+    if (mem[i][mask] != -1) {
+        return mem[i][mask];
+    }
+    
+    int ans = INF;
+    for (int j = 0;j < n;j++) {
+        if (w[i][j] == INF) continue;
+        
+        if (check(mask,j) == 0) {
+            int result = travel(j, turnOn(mask, j)) + w[i][j];
+            ans = min(ans, result);
+        }
+    }
+    
+    return mem[i][mask] = ans;
+}
+
 
 int main()
 {
     ios_base::sync_with_stdio(0);
 
-    ll n, i;
-
-    cin >> n >> m;
-
-    for (i = 1; i <= m; i++)
-    {
-        cin >> coin[i];
-    }
-
-    cout << solve(1, n) << endl;
-
+    
+    
     return 0;
 }
